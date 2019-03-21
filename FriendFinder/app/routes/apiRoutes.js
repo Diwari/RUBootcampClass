@@ -7,29 +7,50 @@ module.exports = function(app){
     res.json(friends);
   });
   app.post("/app/data/friends", function(req,res){
-    friends.push(req.body);
+    
 
-    user
+    
     let bestMatch = {
       name:"",
       photo:"",
       difference: 1000
 
     };
-    console.log(req.body.name);
-    userName = res.body.name;
-    userPhoto = res.body.photo;
-    userScore = res.body.scores;
+    console.log(req.body);
+    let userInput = req.body;
+  
+    userScores = userInput.scores;
 
-    userData = 0;
-
+    let totalDifference;
+    
     for(let i = 0; i < friends.length; i++){
+        // console.log(friends[i].name);
+        // console.log(friends[i].photo);
+        // console.log(friends[i].scores);
+        totalDifference = 0;
+        let currentFriend = friends[i];
 
-    }
+        for(var j = 0; j < currentFriend.scores.length ; j++){
+          let currentFriendScore = currentFriend.scores[j];
+          let currentUserScores = userScores[j];
 
+        
+          totalDifference += Math.abs(parseInt(currentUserScores) - parseInt(currentFriendScore));
+        }
+          if (totalDifference <= bestMatch.difference){
+            bestMatch.name = currentFriend.name;
+            bestMatch.photo = currentFriend.photo;
+            bestMatch.difference = totalDifference;
+          }
+        }
 
+         
+        console.log(totalDifference);
+        console.log(bestMatch.difference);
+        console.log(bestMatch);
+        friends.push(userInput);
 
-
+      res.json(bestMatch);
     //get array from friends.js 
 
 

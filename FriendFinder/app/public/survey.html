@@ -303,17 +303,15 @@
                         <hr>
                         <footer class = "footer">
                           <div class = "container">
-                            ::before
+                          
                             <p>
                               <a href = "/api/friends">Api Friends List</a>
                               " | "
                               <a href="https://github.com/afhaque/friendfinder">GitHub Repo</a>
                             </p> 
-                            ::after
                           </div>
                         </footer>
-                        ::after
-                        <div id = "results-modal" class = "modal fade" id="friend-modal" role = "dialog">
+                        <div id = "results-modal" class = "modal fade" role = "dialog">
                           <div class = "modal-content">
                             <div class = "modal-header">
                               <button type = "button" class = "close" data-dismiss = "modal">x</button>
@@ -323,7 +321,7 @@
                             </div>
                             <div class = "modal-body">
                               <h2 id = "match-name"></h2>
-                              <img id="match-img" src="" alt="">
+                              <img id="match-photo" src="" alt="">
   
                             </div>
                             <div class = "modal-footer">
@@ -333,69 +331,60 @@
                         </div>
       </div>
       <script type = "text/javascript">
-        $("#submit").on("click", 
-        function(event){
+        $("#submit").on("click", function(event){
+          event.preventDefault();
+
           console.log("clicked");
-          let validEntry;
-          if($("#name").val().trim() === ''){
-            alert("Play enter a name");
-          } else if($("#photo").val().trim() === ""){
-            alert("Please link a photo");
-          } else{
 
-            let answerArray = [];
-            for(i = 1; i < 11; i++){
-              answerArray.push(parseInt($("#q" + i).val().substring(0,1)));
-            }
-            let newFriend = 
-            {
-              name: $("#name").val().trim(),
-              photo: $("#photo").val().trim(),
-              scores: answerArray
-            };
-            let currentURL = window.location.origin;
+          function validateForm() {
+            let isValid = true;
+            $(".form-control").each(function(){
+              if($(this).val() === ""){
+                isValid = false;
 
-            $.post( "/app/data/friends", newFriend, function(data){});
-
-            // $.ajax({url: "/app/data/friends", method: "GET"}).done(function(res){
-
-              // let bestFriend;
-              // let currentBest = 100;
-              // let differentArray = [];
-
-              // for(i = 0; i < res.lenght - 1; i++){
-              //   for(j = 0; j < 10; j ++){
-              //     let currentDiffernce = newFriend.score[j] - res[i].scores[j];
-              //     differentArray.push(Math.abs(currentDifference));
-              //   }
-
-              //   let difference = differenceArray.reduce(add, 0);
-
-              //   if(difference < currentBest){
-              //     bestFriend = res[i];
-              //     currentBest = difference;
-              //     differenceArray = [];
-              //   }else{
-              //     differenceArray = [];
-              //   }
-
-              //   let friendName = "<h4>" + bestFriend.name + "</h4>";
-              //   let friendphoto = "<img width='300px' src= " + bestFriend.photo + ">";
-
-              //   $("#friend-modal").modal("show");
-              //   $("#friend-modal h4").html(friendName);
-              //   $(".modal-body").html(friendphoto);
-
-              //   $("#survey")[0].reset();
-          //     }
-            // });
+              }
+            });
+            $(".chosen-select").each(function(){
+              if ($(this).val() === ""){
+                isValid = false;
+              }
+            });
+            return isValid;
           }
-      
+
+          if(validateForm()){
+            let userData = {
+              name: $("#name").val(),
+              
+              photo: $("#photo").val(),
+              scores: [
+                $("#q1").val(),
+                $("#q2").val(),
+                $("#q3").val(),
+                $("#q4").val(),
+                $("#q5").val(),
+                $("#q6").val(),
+                $("#q7").val(),
+                $("#q8").val(),
+                $("#q9").val(),
+                $("#q10").val(),
+              ]
+              
+            };
+              console.log(userData.name);
+            $.post("/app/data/friends", userData, function(data){
+              console.log(data);
+              $("#match-name").text(data.name);
+              $("#match-photo").attr("src", data.photo);
+
+              $("#results-modal").modal("toggle");
+            });
+
+          }else{
+            alert("Please fill out all fields before submitting!");
+          }
           
         });
-      function add(a, b){
-        return a+b;
-      };
       </script>
 </body>
 </html>
